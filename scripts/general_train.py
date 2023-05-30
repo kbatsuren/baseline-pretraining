@@ -42,6 +42,10 @@ def get_parser():
             '--opt_model_size', 
             default='125m', type=str, 
             action='store')
+    parser.add_argument(
+            '--batch_size', 
+            default=128, type=int, 
+            action='store')
     return parser
 
 
@@ -62,8 +66,8 @@ def get_key_params(args):
                 type='AdamW', lr=1e-4, weight_decay=0.1,
                 ),
             add_train_loader_kwargs=add_train_loader_kwargs,
-            desired_batch_size=64,
-            base_batch_size=64,
+            desired_batch_size=args.batch_size,
+            base_batch_size=args.batch_size,
             )
     return params
 

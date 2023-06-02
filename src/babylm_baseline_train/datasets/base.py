@@ -34,7 +34,8 @@ class BaseGroupDataset(ABC):
         outputs = self.tokenizer(examples['text'])
         f_token = open(TOKEN_SAVE_FOLDER+"tokens.tsv", "a", encoding = "utf-8")
         for output in outputs:
-            f_token.write(str(output)+'\n')
+            f_token.write(str(output['input_ids'])+'\n')
+            f_token.write(str(output['attention_mask'])+'\n')
         f_token.close()
         return outputs
 

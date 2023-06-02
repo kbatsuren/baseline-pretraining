@@ -56,7 +56,6 @@ class BaseGroupDataset(ABC):
         f_token = open(TOKEN_SAVE_FOLDER+"replace.records.tsv", "a", encoding = "utf-8")
         indd = 0
 
-        outputs = tokenizer(examples['text'])
         rets = {'input_ids':[], 'attention_mask': []}
         rep_tok_num = 0
         rep_word_num = 0

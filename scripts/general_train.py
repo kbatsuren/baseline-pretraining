@@ -46,6 +46,10 @@ def get_parser():
             '--batch_size', 
             default=128, type=int, 
             action='store')
+    parser.add_argument(
+            '--morphology', 
+            default=False, type=bool, 
+            action='store')
     return parser
 
 

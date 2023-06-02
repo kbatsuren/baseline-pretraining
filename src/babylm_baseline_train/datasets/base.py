@@ -37,7 +37,7 @@ class BaseGroupDataset(ABC):
         for example in examples['text']:
             indd+=1
             f_token.write('=================================\n')
-            f_token.(str(indd)+'\n')
+            f_token.write(str(indd)+'\n')
             f_token.write('=================================\n')
             f_token.write(example+'\n')
             f_token.write('=================================\n')

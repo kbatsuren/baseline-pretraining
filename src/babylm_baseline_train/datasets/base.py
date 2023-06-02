@@ -18,6 +18,27 @@ class BaseGroupDataset(ABC):
     def __init__(self, seq_len, tokenizer):
         self.seq_len = seq_len
         self.tokenizer = tokenizer
+        words = set()
+        spaces = set()
+        for i in range(len(tokenizer)):
+            subword = tokenizer.decode(i)
+            if subword.startswith(' '):
+                if subword[1:].isalpha():
+                    spaces.add(i)
+            elif subword.isalpha():
+                words.add(i)
+        replaces = dict()
+        indx = -1
+        with open(TOKEN_SAVE_FOLDER+'/opt.all.replacements.tsv', encoding='utf-8') as f:
+          for line in f:
+            indx+=1
+            if indx == 0:
+              continue
+            fields = line.rstrip("\n").split("\t")
+            replaces[fields[2].replace(' ','_')]=list(map(int, fields[3].split(' '))) 
+        self.suffix_subwords = words 
+        self.head_subwords = spaces
+        self.replaces = replaces
 
     def prepare_tokenizer(self):
         if self.tokenizer is None:
@@ -32,17 +53,72 @@ class BaseGroupDataset(ABC):
 
     def tokenize_function(self, examples):
         outputs = self.tokenizer(examples['text'])
-        f_token = open(TOKEN_SAVE_FOLDER+"tokens.tsv", "a", encoding = "utf-8")
+        f_token = open(TOKEN_SAVE_FOLDER+"replace.records.tsv", "a", encoding = "utf-8")
         indd = 0
-        for example in examples['text']:
-            indd+=1
-            f_token.write('=================================\n')
-            f_token.write(str(indd)+'\n')
-            f_token.write('=================================\n')
-            f_token.write(example+'\n')
-            f_token.write('=================================\n')
+
+        outputs = tokenizer(examples['text'])
+        rets = {'input_ids':[], 'attention_mask': []}
+        rep_tok_num = 0
+        rep_word_num = 0
+        total_tok_num = 0
+
+        for i in range(len(outputs['input_ids'])):
+          candidate = []
+          result = []
+          focus = [1]
+          total_tok_num += len(outputs['input_ids'][i])
+          for inp_id in outputs['input_ids'][i]:
+            if len(candidate) == 0:
+              if inp_id in self.head_subwords:
+                candidate.append(inp_id)
+              else:
+                result.append(inp_id)
+                continue
+            elif inp_id in self.suffix_subwords:
+              candidate.append(inp_id)
+              continue
+            else:
+              rep_str = '_'.join(map(str, candidate))
+              if rep_str in self.replaces:
+                result+= list(map(int, self.replaces[rep_str])) 
+                rep_tok_num += len(candidate)
+                rep_word_num += 1
+                f_token.write('replaced tokens: '+str(rep_tok_num)+'\treplaced words: '+str(rep_word_num)+'\ttotal_tokens: '+str(total_tok_num)+'\n')
+              else:
+                result+=candidate
+              candidate = []
+              result.append(inp_id)
+          if len(candidate)!=0:
+            rep_str = '_'.join(map(str, candidate))
+            if rep_str in self.replaces:
+              result+= list(map(int, self.replaces[rep_str])) 
+              rep_tok_num += len(candidate)
+              rep_word_num += 1
+              f_token.write('replaced tokens: '+str(rep_tok_num)+'\treplaced words: '+str(rep_word_num)+'\ttotal_tokens: '+str(total_tok_num)+'\n')
+              #print('replaced ', rep_tok_num, rep_word_num)
+            else:
+              result+=candidate
+          focus *= len(result)
+          # print(tokenizer.decode(outputs['input_ids'][i]))
+          # print(tokenizer.decode(result), )
+          # print(len(outputs['input_ids'][i]),len(result), len(outputs['attention_mask'][i]), len(result))
+          # print(outputs['input_ids'][i])
+          # print(outputs['attention_mask'][i])
+          # print(result)
+          # print(focus)
+          rets['input_ids'].append(result)
+          rets['attention_mask'].append(focus)
         f_token.close()
-        return outputs
+
+        # for example in examples['text']:
+        #     indd+=1
+        #     f_token.write('=================================\n')
+        #     f_token.write(str(indd)+'\n')
+        #     f_token.write('=================================\n')
+        #     f_token.write(example+'\n')
+        #     f_token.write('=================================\n')
+        # f_token.close()
+        return rets
 
     def get_group_dataset(self, just_dataset=False):
         self.prepare_tokenizer()

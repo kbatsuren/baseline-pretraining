@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from .utils import Group_Texts
 from ..env_vars import ROOT_DIR, ROOT_DIR_FREQ
-
+import os
 
 TOKEN_SAVE_FOLDER = os.environ.get(
         'BABYLM_TOKEN_SAVE_FOLDER',
@@ -32,7 +32,7 @@ class BaseGroupDataset(ABC):
 
     def tokenize_function(self, examples):
         outputs = self.tokenizer(examples['text'])
-        f_token = open(path+"tokens.tsv", "a", encoding = "utf-8")
+        f_token = open(TOKEN_SAVE_FOLDER+"tokens.tsv", "a", encoding = "utf-8")
         for output in outputs:
             f_token.write(str(output)+'\n')
         f_token.close()

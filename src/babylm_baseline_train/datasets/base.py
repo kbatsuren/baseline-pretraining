@@ -39,6 +39,9 @@ class BaseGroupDataset(ABC):
         self.suffix_subwords = words 
         self.head_subwords = spaces
         self.replaces = replaces
+        self.rep_tok_num = 0
+        self.rep_word_num = 0
+        self.total_tok_num = 0
 
     def prepare_tokenizer(self):
         if self.tokenizer is None:
@@ -57,15 +60,13 @@ class BaseGroupDataset(ABC):
         indd = 0
 
         rets = {'input_ids':[], 'attention_mask': []}
-        rep_tok_num = 0
-        rep_word_num = 0
-        total_tok_num = 0
+        
 
         for i in range(len(outputs['input_ids'])):
           candidate = []
           result = []
           focus = [1]
-          total_tok_num += len(outputs['input_ids'][i])
+          self.total_tok_num += len(outputs['input_ids'][i])
           for inp_id in outputs['input_ids'][i]:
             if len(candidate) == 0:
               if inp_id in self.head_subwords:
@@ -80,9 +81,9 @@ class BaseGroupDataset(ABC):
               rep_str = '_'.join(map(str, candidate))
               if rep_str in self.replaces:
                 result+= list(map(int, self.replaces[rep_str])) 
-                rep_tok_num += len(candidate)
-                rep_word_num += 1
-                f_token.write('replaced tokens: '+str(rep_tok_num)+'\treplaced words: '+str(rep_word_num)+'\ttotal_tokens: '+str(total_tok_num)+'\n')
+                self.rep_tok_num += len(candidate)
+                self.rep_word_num += 1
+                f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\n')
               else:
                 result+=candidate
               candidate = []
@@ -91,9 +92,9 @@ class BaseGroupDataset(ABC):
             rep_str = '_'.join(map(str, candidate))
             if rep_str in self.replaces:
               result+= list(map(int, self.replaces[rep_str])) 
-              rep_tok_num += len(candidate)
-              rep_word_num += 1
-              f_token.write('replaced tokens: '+str(rep_tok_num)+'\treplaced words: '+str(rep_word_num)+'\ttotal_tokens: '+str(total_tok_num)+'\n')
+              self.rep_tok_num += len(candidate)
+              self.rep_word_num += 1
+              f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\n')
               #print('replaced ', rep_tok_num, rep_word_num)
             else:
               result+=candidate

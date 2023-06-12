@@ -43,8 +43,11 @@ def add_exp_seeds(
 add_exp_seeds(
         exp_names=[
             'roberta_s1',
+            'roberta_s2', 
+            'roberta_s3',
+            'roberta_s4'
             ], 
-        seeds=[1], 
+        seeds=[1,2,3,4], 
         data_func=babyLM.get_babyLM_10M)
 
 add_exp_seeds(

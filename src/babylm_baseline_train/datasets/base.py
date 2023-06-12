@@ -29,7 +29,7 @@ class BaseGroupDataset(ABC):
                 words.add(i)
         replaces = dict()
         indx = -1
-        with open(TOKEN_SAVE_FOLDER+'/roberta.all.replacements.v3.tsv', encoding='utf-8') as f:
+        with open(TOKEN_SAVE_FOLDER+'/roberta.all.replacements.v2.r2.tsv', encoding='utf-8') as f:
           for line in f:
             indx+=1
             if indx == 0:
@@ -56,7 +56,7 @@ class BaseGroupDataset(ABC):
 
     def tokenize_function(self, examples):
         outputs = self.tokenizer(examples['text'])
-        f_token = open(TOKEN_SAVE_FOLDER+"replace.records.roberta-base.v3.tsv", "a", encoding = "utf-8")
+        f_token = open(TOKEN_SAVE_FOLDER+"replace.records.roberta-base.v2.r2.tsv", "a", encoding = "utf-8")
         indd = 0
 
         rets = {'input_ids':[], 'attention_mask': []}

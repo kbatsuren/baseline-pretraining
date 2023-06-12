@@ -83,7 +83,7 @@ class BaseGroupDataset(ABC):
                 result+= list(map(int, self.replaces[rep_str])) 
                 self.rep_tok_num += len(candidate)
                 self.rep_word_num += 1
-                f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\n')
+                f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\tchanged:'+rep_str+'\n')
               else:
                 result+=candidate
               candidate = []
@@ -94,7 +94,7 @@ class BaseGroupDataset(ABC):
               result+= list(map(int, self.replaces[rep_str])) 
               self.rep_tok_num += len(candidate)
               self.rep_word_num += 1
-              f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\n')
+              f_token.write('replaced tokens: '+str(self.rep_tok_num)+'\treplaced words: '+str(self.rep_word_num)+'\ttotal_tokens: '+str(self.total_tok_num)+'\tchanged:'+rep_str+'\n')
               #print('replaced ', rep_tok_num, rep_word_num)
             else:
               result+=candidate

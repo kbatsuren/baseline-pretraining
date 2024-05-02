@@ -34,10 +34,11 @@ class babyLMConfig(datasets.BuilderConfig):
 
 class babyLM(datasets.GeneratorBasedBuilder):
     """TODO: Short description of dataset dataset."""
-    DATA_SOURCES = [
-            'aochildes', 'bnc_spoken', 'cbt', 'children_stories',
-            'gutenberg', 'open_subtitles', 'qed',  'simple_wikipedia',
-            'switchboard',  'wikipedia']
+    # DATA_SOURCES = [
+    #         'aochildes', 'bnc_spoken', 'cbt', 'children_stories',
+    #         'gutenberg', 'open_subtitles', 'qed',  'simple_wikipedia',
+    #         'switchboard',  'wikipedia']
+    DATA_SOURCES = ['all']
     VERSION = datasets.Version("0.0.0")
     BUILDER_CONFIGS = [
             babyLMConfig(
@@ -77,15 +78,15 @@ class babyLM(datasets.GeneratorBasedBuilder):
         ret_list = [
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
-                gen_kwargs={"data_folder": os.path.join(_DATA_URL, "babylm_test"), "split": "test"},
+                gen_kwargs={"data_folder": os.path.join(_DATA_URL, "babylm_test"), "split": "txt"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
-                gen_kwargs={"data_folder": os.path.join(_DATA_URL, "babylm_dev"), "split": "dev"},
+                gen_kwargs={"data_folder": os.path.join(_DATA_URL, "babylm_dev"), "split": "txt"},
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
-                gen_kwargs={"data_folder": self.config.data_url, "split": "train"},
+                gen_kwargs={"data_folder": self.config.data_url, "split": "txt"},
             ),
         ]
         return ret_list
